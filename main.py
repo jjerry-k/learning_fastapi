@@ -9,6 +9,19 @@ from fastapi.responses import HTMLResponse
 from starlette.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
+import pymongo
+import datetime
+
+host = "0.0.0.0"
+port = "27017"
+DB = "fastapi"
+MONGO = pymongo.MongoClient(f"mongodb://{host}:{port}")
+
+def update_db(collection: str, item: dict):
+    MONGO[DB][collection].insert(
+        item
+    )
+
 class Item(BaseModel):
     name: str
     price: float
@@ -126,3 +139,17 @@ templates = Jinja2Templates(directory="templates")
 @app.get("/jinja/{id}", response_class=HTMLResponse)
 async def read_item(request: Request, id: str):
     return templates.TemplateResponse("item.html", {"request": request, "id": id})
+
+# Path Parameters
+@app.get("/mongo_test/{item_id}")
+async def read_items(item_id: int, request: Request, v1: str="a", v2: int=1):
+    results = {
+        "date": datetime.datetime.now().ctime(),
+        "client ip":request.client.host,
+        "v1": v1,
+        "v2": v2,
+        }
+
+    update_db("Test", results)
+    results.pop("_id")
+    return results
