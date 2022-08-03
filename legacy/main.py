@@ -18,7 +18,7 @@ DB = "fastapi"
 MONGO = pymongo.MongoClient(f"mongodb://{host}:{port}")
 
 def update_db(collection: str, item: dict):
-    MONGO[DB][collection].insert(
+    MONGO[DB][collection].insert_one(
         item
     )
 
