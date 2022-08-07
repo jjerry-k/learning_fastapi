@@ -1,6 +1,7 @@
 import secrets
 from fastapi import APIRouter, HTTPException, status
 from fastapi.encoders import jsonable_encoder
+
 from ..schemas import User, UserResponse, db
 from ..send_email import send_registration_mail
 from ..utils import get_password_hash
