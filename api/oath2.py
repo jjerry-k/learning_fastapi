@@ -4,7 +4,7 @@ from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
-from schemas import TokenData, db
+from .schemas import TokenData, db
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 
