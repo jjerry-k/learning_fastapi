@@ -58,6 +58,53 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
-
 class TokenData(BaseModel):
     id: str
+
+class Tweet(BaseModel):
+    _id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    id: str = Field(...)
+    tweet: str = Field(...)
+
+    class Config:
+        allowed_population_by_field_name = True
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
+        schema_extra = {
+            "example": {
+                "id": "1",
+                "tweet": "Example"
+            }
+        }
+        
+class Follow(BaseModel):
+    _id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    id: str = Field(...)
+    follow: str = Field(...)
+
+    class Config:
+        allowed_population_by_field_name = True
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
+        schema_extra = {
+            "example": {
+                "id": "1",
+                "follow": "2"
+            }
+        }
+        
+class Unfollow(BaseModel):
+    _id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    id: str = Field(...)
+    unfollow: str = Field(...)
+
+    class Config:
+        allowed_population_by_field_name = True
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
+        schema_extra = {
+            "example": {
+                "id": "1",
+                "unfollow": "2"
+            }
+        }
