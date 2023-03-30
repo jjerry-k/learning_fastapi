@@ -2,3 +2,6 @@ fastapi
 .vscode
 .env
 __pycache__
+migrations
+alembic.ini
+myapi.sqlite

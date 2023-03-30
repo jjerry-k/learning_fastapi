@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "python-backend-book"
+version = "0.1.0"
+description = ""
+authors = ["jjerry-k <jaeyeol2931@gmail.com>"]
+readme = "README.md"
+packages = [{include = "python_backend_book"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fastapi = "^0.95.0"
+alembic = "^1.10.2"
+sqlalchemy = "^2.0.7"
+python-multipart = "^0.0.6"
+uvicorn = {extras = ["standard"], version = "^0.21.1"}
+fastapi-mail = "^1.2.6"
+gunicorn = "^20.1.0"
+pydantic = {extras = ["dotenv", "email"], version = "^1.10.7"}
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+pyyaml = "^6.0"
+bson = "^0.5.10"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,83 +1,32 @@
-from fastapi import FastAPI
-from fastapi.encoders import jsonable_encoder
+import yaml
 
-from schemas import *
+from fastapi import FastAPI
+from starlette.middleware.cors import CORSMiddleware
+from starlette.responses import FileResponse
+from starlette.staticfiles import StaticFiles
+
+from routes.user import router as user_router
+from routes.tweet import router as tweet_router
+
+with open("config.yml") as f:
+    config = yaml.load(f, Loader=yaml.FullLoader)
 
 app = FastAPI()
 
-app.users = {}
-app.id_count = 1
-app.tweets = []
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=config["ORIGIN"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-@app.get("/ping")
-async def ping():
-    return "pong"
+app.include_router(user_router.router)
+app.include_router(tweet_router.router)
+# app.mount("/assets", StaticFiles(directory="frontend/dist/assets"))
 
-@app.post("/sign-up", response_description="Sign up a user")
-async def sign_up(user_info: User):
-    new_user = user_info.dict()
-    new_user["id"] = app.id_count
-    app.id_count += 1
-    app.users[new_user["id"]] = new_user
-    return jsonable_encoder(new_user)
 
-@app.post("/login", response_description="Login a user")
-async def login():
-    pass
-
-@app.post("/tweet", response_description="Tweet a content")
-async def tweet(tweet: Tweet):
-    user_id = int(tweet.id)
-    if user_id not in app.users:
-        return "사용자가 존재하지 않습니다", 400
-
-    if len(tweet.tweet) > 300:
-        return "300자를 초과했습니다", 400
-
-    app.tweets.append({
-        "user_id": user_id,
-        "tweet": tweet.tweet
-    })
-    
-    return "", 200
-
-@app.post("/follow", response_description="Follow a user")
-async def follow(follow: Follow):
-    user_id = int(follow.id)
-    user_id_to_follow = int(follow.follow)
-    if user_id not in app.users or user_id_to_follow not in app.users:
-        return "사용자가 존재하지 않습니다", 400
-
-    user = app.users[user_id]
-    user.setdefault('follow', set()).add(user_id_to_follow)
-
-    return jsonable_encoder(user)
-
-@app.post("/unfollow", response_description="Unfollow a user")
-async def unfollow(unfollow: Unfollow):
-    user_id = int(Unfollow.id)
-    user_id_to_unfollow = int(Unfollow.follow)
-    if user_id not in app.users or user_id_to_unfollow not in app.users:
-        return "사용자가 존재하지 않습니다", 400
-
-    user = app.users[user_id]
-    user.setdefault('follow', set()).discard(user_id_to_unfollow)
-
-    return jsonable_encoder(user)
-
-@app.post("/timeline", response_description="Get a user's timeline ")
-async def timeline():
-    pass
-# API List
-# Sign up
-# - id, name, email, password, profile
-# Login
-# - email, password
-# Tweet
-# - id, content
-# Follow
-# - id, follow id
-# Unfollow
-# - id, unfollow id
-# Timeline
-# - id
+@app.get("/")
+def index():
+    return {"msg":"Hello, World"}
+    # return FileResponse("frontend/dist/index.html")
